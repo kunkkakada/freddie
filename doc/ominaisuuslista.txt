@@ -1,0 +1,13 @@
+*pelaaja
+	-liikkuu eteen-/taaksepäin WS
+	-kääntää suuntaa AD
+	-hyppää spacebar
+	-ampuu LMB
+	-poimii/käyttää kentän esinettä E
+	-lataa aseen R
+	-avaa inventoorin I
+	-aseen vaihto 
+	-vaihtaa henkilöä/eläintä, jonka kautta kamera
+	-kääntää kuvakulmaa MOUSE
+	-heittää herjaa
+	-pieraisee
