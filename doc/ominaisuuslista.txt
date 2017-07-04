@@ -6,8 +6,37 @@
 	-poimii/k‰ytt‰‰ kent‰n esinett‰ E
 	-lataa aseen R
 	-avaa inventoorin I
-	-aseen vaihto 
-	-vaihtaa henkilˆ‰/el‰int‰, jonka kautta kamera
-	-k‰‰nt‰‰ kuvakulmaa MOUSE
-	-heitt‰‰ herjaa
-	-pieraisee
+	-aseen vaihto Z
+	-vaihtaa henkilˆ‰/el‰int‰, jonka kautta kamera MOUSE SCROLL
+	-k‰‰nt‰‰ kuvakulmaa MOUSE (katso vihollinen)
+	-heitt‰‰ herjaa C
+	-pieraisee F
+
+*YLƒLUOKKA hahmo:
+
+**vihollinen
+	-liikkuu "‰lykk‰‰sti"
+	-ampuu kun pelaaja t‰ht‰imess‰/l‰hell‰
+	-kuulla pelaajan ‰‰ni
+	-haistaa pelaajan pierun
+	-toimii silmin‰
+	-reagoi n‰kemiins‰ ep‰normaaleihin juttuihin
+
+
+**muu hahmo (patsas, lokki ...)
+	-toimii silmin‰
+	-mahdollisesti liikkuu/lent‰‰
+
+*NPC (viheltel‰v‰t tms tekev‰t, joille pystyy juttelemaan)
+	-keskusteluita 
+
+*inventoori; mit‰ pit‰‰ pysty‰ tekem‰‰n
+	-valita aktiivinen tavara
+	-tiputtaa tavaroita
+	-j‰rjest‰‰ tavarat
+
+*Kent‰t esim
+	-tapa Brutus
+	-etsi graalinmalja
+	-pakene nunnia
+	-...
