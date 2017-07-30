@@ -18,7 +18,7 @@ inputHandler = Input(msgBus)
 scene = Scene(msgBus)
 screen = Screen(msgBus, 800, 600, 'Roguelike', 10, 20)
 
-
+# Define function for loading scenes from predefined text files
 def loadScene(scenefile):
     scene = Scene(msgBus)
     file = open(scenefile, "r")
@@ -29,6 +29,7 @@ def loadScene(scenefile):
     file.close
     return scene
 
+# Load scene
 scene1 = loadScene("map1.txt")
 
 # Initialize system list
@@ -66,7 +67,6 @@ while is_running:
             msg = Message(MsgType.SCREEN)
             msg.content = {'type': 'update', 'objList': scene1.objects.values()}
             msgBus.postMessage(msg)
-            screen.updateObjectList(scene1.objects.values())
             
             # Clean message bus
             msgBus.cleanMessageBus()
