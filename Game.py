@@ -25,12 +25,10 @@ class Game:
 			self.msg_bus.print_message_bus()
 			self.clean_message_bus()
 			
-			self.screen.fill((255,255,255))
-			pygame.display.flip()
 			
 			
 			pygame.event.pump()
-			#pygame.time.wait(1000)
+			pygame.time.wait(50)
 		
 		#while gamelogic.running:
 			# get input, and append messages accordingly
