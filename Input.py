@@ -1,5 +1,6 @@
 from Message import *
-from pygame import key
+from pygame.locals import *
+
 
 class Input:
 	def __init__(self, msg_bus):
