@@ -1,37 +1,51 @@
 from Message import *
 from Input import *
+import pygame
 
-class Game(object):
+class Game:
 	
 	def __init__(self):
-		self.messageBus = []
-		#self.audio = Audio()
-		#self.gui = GUI()
-		#self.scene = Scene() # basically this is one level; it holds AIs, world, player, NPCs
-		#self.gameLogic = GameLogic()
-		#self.inputHandler = Input()
-		#self.renderer = Renderer()
-
-	def loop(self):
+		self.msg_bus = MessageBus()
+		self.systems = {'Input': Input(self.msg_bus)}
+		#self.audio = audio()
+		#self.gui = gui()
+		#self.scene = scene() # basically this is one level; it holds ais, world, player, npcs
+		#self.gamelogic = gamelogic()
 		
-		#while gameLogic.running:
-			# get input, and append messages accordingly
-			#Input.get() # ->messages to Bus
-			#cleanMessageBus
+		#self.renderer = renderer()
+	
+	def loop(self):
+		running = True
+		
+		while running:
+			keys = pygame.key.get_pressed()
+			self.systems['Input'].handle_keys(keys)
 			
-			#scene.update ->messages to Bus
-			#cleanMessageBus
+			self.msg_bus.print_message_bus()
+			clean_message_bus()
+			
+		
+		#while gamelogic.running:
+			# get input, and append messages accordingly
+			#input.get() # ->messages to bus
+			#cleanmessagebus
+			
+			#scene.update ->messages to bus
+			#cleanmessagebus
 			
 			#audio.play()
 			#renderer.draw()
 			#gui.update()
-			
-		
-		
-    def clean_message_bus(self):
-        # Send messages out from the messagebus to correct receivers
-        while len(self.msg_list)>0:
-            # Select correct system depending on the message type, handle message and remove from bus
-            msg = self.msg_list.pop(0)
-            system = self.systems[msg.msg_type]
-            system.handle_message(msg)
+	
+	def clean_message_bus(self):
+		# send messages out from the messagebus to correct receivers
+		while len(self.msg_bus.msg_list)>0:
+			# select correct system depending on the message type, handle message and remove from bus
+			msg = self.msg_bus.msg_list.pop(0)
+			for system in self.systems.values():
+				system.handle_message(msg)
+	
+
+if __name__=='__main__':
+	game = Game()
+	game.loop()

@@ -20,5 +20,8 @@ class MessageBus:
 
     def post_message(self, msg):
         self.msg_list.append(msg)
-
+        
+	def print_message_bus(self):
+		for i, msg in enumerate(self.msg_list):
+			print i+1, msg.msg_type, msg.content
 
