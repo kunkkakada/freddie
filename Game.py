@@ -1,5 +1,5 @@
 from Message import *
-
+from Input import *
 
 class Game(object):
 	
@@ -26,12 +26,12 @@ class Game(object):
 			#renderer.draw()
 			#gui.update()
 			
-			
-	def cleanMessageBus(self):
-		#for mess in messageBus:
-				# if type is joku:
-					#self.scene.handleMessage()
-		
-			
 		
 		
+    def clean_message_bus(self):
+        # Send messages out from the messagebus to correct receivers
+        while len(self.msg_list)>0:
+            # Select correct system depending on the message type, handle message and remove from bus
+            msg = self.msg_list.pop(0)
+            system = self.systems[msg.msg_type]
+            system.handle_message(msg)
