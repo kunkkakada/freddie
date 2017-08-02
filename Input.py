@@ -80,39 +80,28 @@ class Input:
 	# UP/DOWN: LMB 1, scroll click 2, RMB 3, scroll up 4, scroll down 5
 	# MOTION: list of clicked buttons
 	def handle_mouse(self, event_type, button, pos, rel=None,  state='running'):
+		msg = Message(MsgType.INPUT)
 		if state=='running':
 			
 			if event_type==0:
-				msg = Message(MsgType.INPUT)
 				msg.content{'type': 'move camera', 'rel': rel}
-				self.msg_bus.post_message(msg)
 				
-			if event_type==1:
+			elif event_type==1:
 				if button==1:
-					msg = Message(MsgType.INPUT)
 					msg.content{'type': 'stop shooting'}
-					self.msg_bus.post_message(msg)
-				if button==3:
-					msg = Message(MsgType.INPUT)
+				elif button==3:
 					msg.content{'type': 'release throwable'}
-					self.msg_bus.post_message(msg)
 					
-			if event_type==2:
+			elif event_type==2:
 				if button==1:
-					msg = Message(MsgType.INPUT)
 					msg.content{'type': 'shoot'}
-					self.msg_bus.post_message(msg)
-				if button==3:
-					msg = Message(MsgType.INPUT)
+				elif button==3:
 					msg.content{'type': 'load throwable'}
-					self.msg_bus.post_message(msg)
-				if button==4:
-					msg = Message(MsgType.INPUT)
+				elif button==4:
 					msg.content{'type': 'switch camera forward'}
-					self.msg_bus.post_message(msg)
-				if button==5:
-					msg = Message(MsgType.INPUT)
+				elif button==5:
 					msg.content{'type': 'switch camera backward'}
-					self.msg_bus.post_message(msg)
-		
+					
+		if msg.content not None:
+			self.msg_bus.post_message(msg)
 		
