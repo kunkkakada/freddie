@@ -19,8 +19,16 @@ class Game:
 		running = True
 		
 		while running:
+			events = pygame.event.get()
 			keys = pygame.key.get_pressed()
-			#print keys
+			
+			for event in events:
+				if event.type == MOUSEMOTION:
+					self.systems['Input'].handle_mouse(0, event.buttons, pygame.mouse.get_pos(), pygame.mouse.get_rel())
+				elif event.type == MOUSEBUTTONUP:
+					self.systems['Input'].handle_mouse(1, event.button, pygame.mouse.get_pos())
+				elif event.type == MOUSEBUTTONDOWN:
+					self.systems['Input'].handle_mouse(2, event.button, pygame.mouse.get_pos())
 			self.systems['Input'].handle_keys(keys)
 			self.msg_bus.print_message_bus()
 			self.clean_message_bus()
