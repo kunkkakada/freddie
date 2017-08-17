@@ -7,6 +7,7 @@
 	-lataa aseen R
 	-avaa inventoorin I
 	-aseen vaihto Z
+	-k‰yt‰ 'potioni'
 	-vaihtaa henkilˆ‰/el‰int‰, jonka kautta kamera MOUSE SCROLL
 	-k‰‰nt‰‰ kuvakulmaa MOUSE (katso vihollinen)
 	-heitt‰‰ herjaa C

@@ -22,7 +22,7 @@ class Player:
 			if msg.content['cmd']=='jump':
 				self.load_jump=msg.content['time']
 			elif msg.content['cmd']=='stop jump':
-				self.vel[2]+=0.0001*min(1000, msg.content['time']-self.load_jump)*JUMPSPEED
+				self.vel[2]+=min(1000, msg.content['time']-self.load_jump)*JUMPSPEED
 				self.load_jump = None
 			elif msg.content['cmd']=='forward':
 				self.vel += (proj_normalize(self.towards)*WALKSPEED).astype(np.int32)
@@ -40,7 +40,6 @@ class Player:
 		
 		
 	def update(self, dt):
-		#dt = dt*0.001
 		self.pos += dt*self.vel
 		
 		self.pos[2] = max(0, self.pos[2])
