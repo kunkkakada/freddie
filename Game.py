@@ -1,12 +1,13 @@
 from Message import *
 from Input import *
+from Player import *
 import pygame
 
 class Game:
 	
 	def __init__(self):
 		self.msg_bus = MessageBus()
-		self.systems = {'Input': Input(self.msg_bus)}
+		self.systems = {'Input': Input(self.msg_bus), 'Player': Player(self.msg_bus)}
 		self.screen = pygame.display.set_mode((800, 600))
 		#self.audio = audio()
 		#self.gui = gui()
@@ -17,30 +18,35 @@ class Game:
 	
 	def loop(self):
 		running = True
+		clock = pygame.time.Clock()
 		
 		while running:
+			clock.tick(50)
 			events = pygame.event.get()
 			keys = pygame.key.get_pressed()
+			time = pygame.time.get_ticks()
 			
 			for event in events:
 				if event.type == MOUSEMOTION:
-					self.systems['Input'].handle_mouse(0, event.buttons, pygame.mouse.get_pos(), pygame.mouse.get_rel())
+					self.systems['Input'].handle_mouse(0, event.buttons, pygame.mouse.get_pos(), time, rel=pygame.mouse.get_rel())
 				elif event.type == MOUSEBUTTONUP:
-					self.systems['Input'].handle_mouse(1, event.button, pygame.mouse.get_pos())
+					self.systems['Input'].handle_mouse(1, event.button, pygame.mouse.get_pos(), time)
 				elif event.type == MOUSEBUTTONDOWN:
-					self.systems['Input'].handle_mouse(2, event.button, pygame.mouse.get_pos())
+					self.systems['Input'].handle_mouse(2, event.button, pygame.mouse.get_pos(), time)
 				elif event.type == KEYDOWN:
-					self.systems['Input'].handle_key_down(event.key)
+					self.systems['Input'].handle_key_down(event.key, time)
 				elif event.type == KEYUP:
-					self.systems['Input'].handle_key_up(event.key)
-					
+					self.systems['Input'].handle_key_up(event.key, time)
+			#self.systems['Input'].handle_keys(keys)	
+			
+			
 			self.msg_bus.print_message_bus()
 			self.clean_message_bus()
-			
-			
+			self.systems['Player'].update(clock.get_time())
+			#self.systems['Player'].print_player()
 			
 			pygame.event.pump()
-			pygame.time.wait(50)
+			
 		
 		#while gamelogic.running:
 			# get input, and append messages accordingly

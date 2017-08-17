@@ -9,174 +9,107 @@ class Input:
 	def handle_message(self, msg):
 		return
 		
-	# called from main; keys parameter is the list of booleans from pygame.key.get_pressed()
-	def handle_keys(self, keys, state='running'):
-		if state=='running':
-			if keys[K_f]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'fart'}
-				self.msg_bus.post_message(msg)
-			
-			if keys[K_c]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'curse'}
-				self.msg_bus.post_message(msg)
-	
-			if keys[K_a]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'turn left'}
-				self.msg_bus.post_message(msg)
-				
-			if keys[K_d]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'turn right'}
-				self.msg_bus.post_message(msg)
-		
-			if keys[K_w]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'forward'}
-				self.msg_bus.post_message(msg)
-	
-			if keys[K_s]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'backward'}
-				self.msg_bus.post_message(msg)
-	
-			if keys[K_SPACE]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'jump'}
-				self.msg_bus.post_message(msg)
-				
-			if keys[K_e]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'use'}
-				self.msg_bus.post_message(msg)
-				
-			if keys[K_r]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'reload'}
-				self.msg_bus.post_message(msg)
-				
-			if keys[K_i]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'inventory'}
-				self.msg_bus.post_message(msg)
-				
-			if keys[K_z]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'switch weapon'}
-				self.msg_bus.post_message(msg)
-				
-			if keys[K_ESCAPE]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'menu'}
-				self.msg_bus.post_message(msg)
-				
-			if keys[K_q]:
-				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'quick use'}
-				self.msg_bus.post_message(msg)
 				
 # called from main; key parameter is a key from pygame.locals				
-	def handle_key_down(self, key, state='running'):
+	def handle_key_down(self, key, t, state='running'):
 		if state=='running':
 			if key==K_f:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'fart'}
+				msg.content={'cmd': 'fart', 'time':t}
 				self.msg_bus.post_message(msg)
 			
 			if key==K_c:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'curse'}
+				msg.content={'cmd': 'curse', 'time':t}
 				self.msg_bus.post_message(msg)
 	
 			if key==K_a:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'turn left'}
+				msg.content={'cmd': 'turn left', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 			if key==K_d:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'turn right'}
+				msg.content={'cmd': 'turn right', 'time':t}
 				self.msg_bus.post_message(msg)
 		
 			if key==K_w:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'forward'}
+				msg.content={'cmd': 'forward', 'time':t}
 				self.msg_bus.post_message(msg)
 	
 			if key==K_s:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'backward'}
+				msg.content={'cmd': 'backward', 'time':t}
 				self.msg_bus.post_message(msg)
 	
 			if key==K_SPACE:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'jump'}
+				msg.content={'cmd': 'jump', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 			if key==K_e:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'use'}
+				msg.content={'cmd': 'use', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 			if key==K_r:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'reload'}
+				msg.content={'cmd': 'reload', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 			if key==K_i:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'inventory'}
+				msg.content={'cmd': 'inventory', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 			if key==K_z:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'switch weapon'}
+				msg.content={'cmd': 'switch weapon', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 			if key==K_ESCAPE:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'menu'}
+				msg.content={'cmd': 'menu', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 			if key==K_q:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'quick use'}
+				msg.content={'cmd': 'quick use', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 # called from main; key parameter is a key from pygame.locals				
-	def handle_key_up(self, key, state='running'):
+	def handle_key_up(self, key, t, state='running'):
 		if state=='running':
 			if key==K_f:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'stop fart'}
+				msg.content={'cmd': 'stop fart', 'time':t}
 				self.msg_bus.post_message(msg)
 			
 	
 			if key==K_a:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'stop turn left'}
+				msg.content={'cmd': 'stop turn left', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 			if key==K_d:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'stop turn right'}
+				msg.content={'cmd': 'stop turn right', 'time':t}
 				self.msg_bus.post_message(msg)
 		
 			if key==K_w:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'stop forward'}
+				msg.content={'cmd': 'stop forward', 'time':t}
 				self.msg_bus.post_message(msg)
 	
 			if key==K_s:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'stop backward'}
+				msg.content={'cmd': 'stop backward', 'time':t}
 				self.msg_bus.post_message(msg)
 	
 			if key==K_SPACE:
 				msg = Message(MsgType.INPUT)
-				msg.content={'cmd': 'stop jump'}
+				msg.content={'cmd': 'stop jump', 'time':t}
 				self.msg_bus.post_message(msg)
 				
 
@@ -187,28 +120,28 @@ class Input:
 	# MOUSEMOTION 0, MOUSEBUTTONUP 1, MOUSEBUTTONDOWN 2
 	# UP/DOWN: LMB 1, scroll click 2, RMB 3, scroll up 4, scroll down 5
 	# MOTION: list of clicked buttons
-	def handle_mouse(self, event_type, button, pos, rel=None,  state='running'):
+	def handle_mouse(self, event_type, button, pos, t, rel=None,  state='running'):
 		msg = Message(MsgType.INPUT)
 		if state=='running':
 			
 			if event_type==0:
-				msg.content={'cmd': 'move camera', 'rel': rel}
+				msg.content={'cmd': 'move camera', 'rel': rel, 'time':t}
 				
 			elif event_type==1:
 				if button==1:
-					msg.content={'cmd': 'stop shoot'}
+					msg.content={'cmd': 'stop shoot', 'time':t}
 				elif button==3:
-					msg.content={'cmd': 'release throwable'}
+					msg.content={'cmd': 'release throwable', 'time':t}
 					
 			elif event_type==2:
 				if button==1:
-					msg.content={'cmd': 'shoot'}
+					msg.content={'cmd': 'shoot', 'time':t}
 				elif button==3:
-					msg.content={'cmd': 'load throwable'}
+					msg.content={'cmd': 'load throwable', 'time':t}
 				elif button==4:
-					msg.content={'cmd': 'switch camera forward'}
+					msg.content={'cmd': 'switch camera forward', 'time':t}
 				elif button==5:
-					msg.content={'cmd': 'switch camera backward'}
+					msg.content={'cmd': 'switch camera backward', 'time':t}
 					
 		if msg.content:
 			self.msg_bus.post_message(msg)
