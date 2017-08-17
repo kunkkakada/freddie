@@ -1,0 +1,40 @@
+
+List of message contents by system
+
+Input
+
+cmd
+	actions:
+		use
+		quick use
+		fart
+		curse
+		stop fart
+		
+	shooting:
+		shoot
+		stop shoot
+		switch weapon
+		reload
+		load throwable
+		release throwable
+		
+	movement:
+		forward
+		backward
+		turn left
+		turn right
+		jump
+		stop forward
+		stop backward
+		stop jump
+
+	gui:
+		menu
+		inventory
+		
+	camera:
+		move camera
+		switch camera forward
+		switch camera backward
+		
