@@ -76,6 +76,111 @@ class Input:
 				msg = Message(MsgType.INPUT)
 				msg.content={'cmd': 'quick use'}
 				self.msg_bus.post_message(msg)
+				
+# called from main; key parameter is a key from pygame.locals				
+	def handle_key_down(self, key, state='running'):
+		if state=='running':
+			if key==K_f:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'fart'}
+				self.msg_bus.post_message(msg)
+			
+			if key==K_c:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'curse'}
+				self.msg_bus.post_message(msg)
+	
+			if key==K_a:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'turn left'}
+				self.msg_bus.post_message(msg)
+				
+			if key==K_d:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'turn right'}
+				self.msg_bus.post_message(msg)
+		
+			if key==K_w:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'forward'}
+				self.msg_bus.post_message(msg)
+	
+			if key==K_s:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'backward'}
+				self.msg_bus.post_message(msg)
+	
+			if key==K_SPACE:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'jump'}
+				self.msg_bus.post_message(msg)
+				
+			if key==K_e:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'use'}
+				self.msg_bus.post_message(msg)
+				
+			if key==K_r:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'reload'}
+				self.msg_bus.post_message(msg)
+				
+			if key==K_i:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'inventory'}
+				self.msg_bus.post_message(msg)
+				
+			if key==K_z:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'switch weapon'}
+				self.msg_bus.post_message(msg)
+				
+			if key==K_ESCAPE:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'menu'}
+				self.msg_bus.post_message(msg)
+				
+			if key==K_q:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'quick use'}
+				self.msg_bus.post_message(msg)
+				
+# called from main; key parameter is a key from pygame.locals				
+	def handle_key_up(self, key, state='running'):
+		if state=='running':
+			if key==K_f:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'stop fart'}
+				self.msg_bus.post_message(msg)
+			
+	
+			if key==K_a:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'stop turn left'}
+				self.msg_bus.post_message(msg)
+				
+			if key==K_d:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'stop turn right'}
+				self.msg_bus.post_message(msg)
+		
+			if key==K_w:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'stop forward'}
+				self.msg_bus.post_message(msg)
+	
+			if key==K_s:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'stop backward'}
+				self.msg_bus.post_message(msg)
+	
+			if key==K_SPACE:
+				msg = Message(MsgType.INPUT)
+				msg.content={'cmd': 'stop jump'}
+				self.msg_bus.post_message(msg)
+				
+
+	
 	
 	
 	# the mouse event is translated to int values in main, and here the corresponding messages are posted
@@ -91,7 +196,7 @@ class Input:
 				
 			elif event_type==1:
 				if button==1:
-					msg.content={'cmd': 'stop shooting'}
+					msg.content={'cmd': 'stop shoot'}
 				elif button==3:
 					msg.content={'cmd': 'release throwable'}
 					

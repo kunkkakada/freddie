@@ -29,7 +29,11 @@ class Game:
 					self.systems['Input'].handle_mouse(1, event.button, pygame.mouse.get_pos())
 				elif event.type == MOUSEBUTTONDOWN:
 					self.systems['Input'].handle_mouse(2, event.button, pygame.mouse.get_pos())
-			self.systems['Input'].handle_keys(keys)
+				elif event.type == KEYDOWN:
+					self.systems['Input'].handle_key_down(event.key)
+				elif event.type == KEYUP:
+					self.systems['Input'].handle_key_up(event.key)
+					
 			self.msg_bus.print_message_bus()
 			self.clean_message_bus()
 			
