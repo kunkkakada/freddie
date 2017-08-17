@@ -9,8 +9,8 @@ G = 9.81
 class Player:
 	def __init__(self, msg_bus):
 		self.msg_bus = msg_bus
-		self.pos = np.array([0,0,0], dtype=float) # x, y, z
-		self.vel = np.array([0,0,0], dtype=float) # vx, vy ,vz
+		self.pos = np.array([0,0,0], dtype=int) # x, y, z
+		self.vel = np.array([0,0,0], dtype=int) # vx, vy ,vz
 		self.towards = np.array([1,0,0], dtype=float) # 
 		self.turning = 0
 		self.sector = None

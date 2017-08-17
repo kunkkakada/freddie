@@ -1,14 +1,14 @@
 from Message import *
 from Input import *
 from Player import *
+from Display import *
 import pygame
 
 class Game:
 	
 	def __init__(self):
 		self.msg_bus = MessageBus()
-		self.systems = {'Input': Input(self.msg_bus), 'Player': Player(self.msg_bus)}
-		self.screen = pygame.display.set_mode((800, 600))
+		self.systems = {'Input': Input(self.msg_bus), 'Player': Player(self.msg_bus), 'Screen': Display(self.msg_bus)}
 		#self.audio = audio()
 		#self.gui = gui()
 		#self.scene = scene() # basically this is one level; it holds ais, world, player, npcs
@@ -44,9 +44,10 @@ class Game:
 			self.clean_message_bus()
 			self.systems['Player'].update(clock.get_time())
 			#self.systems['Player'].print_player()
+			self.systems['Screen'].update(self.systems['Player'].pos,self.systems['Player'].towards)
 			
 			pygame.event.pump()
-			
+			pygame.display.update()
 		
 		#while gamelogic.running:
 			# get input, and append messages accordingly
