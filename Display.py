@@ -18,7 +18,7 @@ class Display:
 
 	def update(self, ppos, pdir):
 		pdir = np.array([pdir[0], pdir[1]])
-		linend = np.add(np.array([ppos[0],ppos[1]]),5*pdir)
+		linend = np.add(np.array([ppos[0],ppos[1]]),10*pdir)
 		# draw on the surface object
 		self.screen.fill(BLACK)
 		pygame.draw.circle(self.screen, RED, (ppos[0],ppos[1]), 1)

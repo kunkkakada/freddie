@@ -4,12 +4,13 @@ from Message import *
 
 JUMPSPEED = 5
 WALKSPEED = 2
+TURNSPEED = 2
 G = 9.81
 
 class Player:
 	def __init__(self, msg_bus):
 		self.msg_bus = msg_bus
-		self.pos = np.array([0,0,0], dtype=int) # x, y, z
+		self.pos = np.array([20,20,0], dtype=int) # x, y, z
 		self.vel = np.array([0,0,0], dtype=int) # vx, vy ,vz
 		self.towards = np.array([1,0,0], dtype=float) # 
 		self.turning = 0
@@ -24,9 +25,9 @@ class Player:
 				self.vel[2]+=0.0001*min(1000, msg.content['time']-self.load_jump)*JUMPSPEED
 				self.load_jump = None
 			elif msg.content['cmd']=='forward':
-				self.vel += proj_normalize(self.towards)*WALKSPEED
+				self.vel += (proj_normalize(self.towards)*WALKSPEED).astype(np.int32)
 			elif msg.content['cmd']=='backward':
-				self.vel -= proj_normalize(self.towards)*WALKSPEED
+				self.vel -= (proj_normalize(self.towards)*WALKSPEED).astype(np.int32)
 			elif msg.content['cmd']=='stop forward' or msg.content['cmd']=='stop backward':
 				self.vel = np.array([0,0,self.vel[2]])
 			elif msg.content['cmd']=='turn left':
@@ -39,7 +40,7 @@ class Player:
 		
 		
 	def update(self, dt):
-		dt = dt*0.001
+		#dt = dt*0.001
 		self.pos += dt*self.vel
 		
 		self.pos[2] = max(0, self.pos[2])
@@ -48,7 +49,7 @@ class Player:
 		else:
 			self.vel[2]=0
 		if self.turning!=0:
-			self.towards = rotate(self.towards, 0.5*self.turning)
+			self.towards = rotate(self.towards, TURNSPEED*self.turning)
 			
 			
 		if np.linalg.norm(self.vel)>0 or self.turning!=0:
