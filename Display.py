@@ -21,8 +21,8 @@ class Display:
 		linend = np.add(np.array([ppos[0],ppos[1]]),10*pdir)
 		# draw on the surface object
 		self.screen.fill(BLACK)
-		pygame.draw.circle(self.screen, RED, (ppos[0],ppos[1]), 1)
-		pygame.draw.line(self.screen, BLUE, (ppos[0],ppos[1]), (linend[0], linend[1]))
+		pygame.draw.circle(self.screen, RED, (int(np.round(ppos[0])),int(np.round(ppos[1]))), 1)
+		pygame.draw.line(self.screen, BLUE, (int(np.round(ppos[0])),int(np.round(ppos[1]))), (linend[0], linend[1]))
 
 	def handle_message(self, msg):
 		return

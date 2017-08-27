@@ -2,18 +2,19 @@ import numpy as np
 from Message import *
 
 
-JUMPSPEED = 5
-WALKSPEED = 2
-TURNSPEED = 2
+JUMPSPEED = 5.0
+WALKSPEED = 0.5
+TURNSPEED = 3.0
 G = 9.81
 
 class Player:
 	def __init__(self, msg_bus):
 		self.msg_bus = msg_bus
-		self.pos = np.array([20,20,0], dtype=int) # x, y, z
-		self.vel = np.array([0,0,0], dtype=int) # vx, vy ,vz
+		self.pos = np.array([20,20,0], dtype=float) # x, y, z
+		self.vel = np.array([0,0,0], dtype=float) # vx, vy ,vz
 		self.towards = np.array([1,0,0], dtype=float) # 
 		self.turning = 0
+		self.moving = 0
 		self.sector = None
 		self.load_jump = None
 	
@@ -25,11 +26,14 @@ class Player:
 				self.vel[2]+=min(1000, msg.content['time']-self.load_jump)*JUMPSPEED
 				self.load_jump = None
 			elif msg.content['cmd']=='forward':
-				self.vel += (proj_normalize(self.towards)*WALKSPEED).astype(np.int32)
+				self.moving = 1
+				#self.vel += (proj_normalize(self.towards)*WALKSPEED) 
 			elif msg.content['cmd']=='backward':
-				self.vel -= (proj_normalize(self.towards)*WALKSPEED).astype(np.int32)
+				self.moving = -1
+								#self.vel -= (proj_normalize(self.towards)*WALKSPEED) 
 			elif msg.content['cmd']=='stop forward' or msg.content['cmd']=='stop backward':
 				self.vel = np.array([0,0,self.vel[2]])
+				self.moving = 0
 			elif msg.content['cmd']=='turn left':
 				self.turning = 1
 			elif msg.content['cmd']=='turn right':
@@ -49,7 +53,8 @@ class Player:
 			self.vel[2]=0
 		if self.turning!=0:
 			self.towards = rotate(self.towards, TURNSPEED*self.turning)
-			
+		if self.moving!=0:
+			self.vel = self.moving*(proj_normalize(self.towards)*WALKSPEED) 
 			
 		if np.linalg.norm(self.vel)>0 or self.turning!=0:
 			self.print_player()
@@ -73,7 +78,7 @@ def proj_normalize(vector):
 	
 def rotate(vector, angle):
 	a = np.deg2rad(angle)
-	R = np.zeros((3,3))
+	R = np.zeros((3,3), dtype=float)
 	R[0,0] = np.cos(a)
 	R[0,1] = np.sin(a)
 	R[1,0] = -R[0,1]
