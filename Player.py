@@ -61,9 +61,12 @@ class Player:
 			self.towards = rotate(self.towards, TURNSPEED)
 		if self.turnright!=0:
 			self.towards = rotate(self.towards, -TURNSPEED)
-		if self.moveforward!=0:
+			
+		if self.moveforward!=0 and self.movebackward!=0:	
+			self.vel = np.array([0,0,self.vel[2]])
+		elif self.moveforward!=0:
 			self.vel = (proj_normalize(self.towards)*WALKSPEED)
-		if self.movebackward!=0:
+		elif self.movebackward!=0:
 			self.vel = -(proj_normalize(self.towards)*WALKSPEED) 
 			
 		if np.linalg.norm(self.vel)>0 or self.turnleft!=0 or self.turnright!=0:
