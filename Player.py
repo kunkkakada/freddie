@@ -25,21 +25,23 @@ class Player:
 			elif msg.content['cmd']=='stop jump':
 				self.vel[2]+=min(1000, msg.content['time']-self.load_jump)*JUMPSPEED
 				self.load_jump = None
-			elif msg.content['cmd']=='forward':
+			elif msg.content['cmd']=='forward' and self.moving==0:
 				self.moving = 1
 				#self.vel += (proj_normalize(self.towards)*WALKSPEED) 
-			elif msg.content['cmd']=='backward':
+			elif msg.content['cmd']=='backward' and self.moving==0:
 				self.moving = -1
 								#self.vel -= (proj_normalize(self.towards)*WALKSPEED) 
-			elif msg.content['cmd']=='stop forward' or msg.content['cmd']=='stop backward':
+			elif (msg.content['cmd']=='stop forward' and self.moving ==1)  or (msg.content['cmd']=='stop backward' and self.moving==-1):
 				self.vel = np.array([0,0,self.vel[2]])
 				self.moving = 0
-			elif msg.content['cmd']=='turn left':
+		
+			elif msg.content['cmd']=='turn left' and self.turning==0:
 				self.turning = 1
-			elif msg.content['cmd']=='turn right':
+			elif msg.content['cmd']=='turn right' and self.turning==0:
 				self.turning = -1	
-			elif msg.content['cmd']=='stop turn right' or msg.content['cmd']=='stop turn left':
+			elif (msg.content['cmd']=='stop turn right' and self.turning == -1) or (msg.content['cmd']=='stop turn left'  and self.turning == 1):
 				self.turning = 0
+
 		return
 		
 		
