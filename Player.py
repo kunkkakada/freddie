@@ -13,8 +13,10 @@ class Player:
 		self.pos = np.array([20,20,0], dtype=float) # x, y, z
 		self.vel = np.array([0,0,0], dtype=float) # vx, vy ,vz
 		self.towards = np.array([1,0,0], dtype=float) # 
-		self.turning = 0
-		self.moving = 0
+		self.turnleft = 0
+		self.turnright = 0
+		self.moveforward = 0
+		self.movebackward = 0
 		self.sector = None
 		self.load_jump = None
 	
@@ -25,23 +27,25 @@ class Player:
 			elif msg.content['cmd']=='stop jump':
 				self.vel[2]+=min(1000, msg.content['time']-self.load_jump)*JUMPSPEED
 				self.load_jump = None
-			elif msg.content['cmd']=='forward' and self.moving==0:
-				self.moving = 1
+			elif msg.content['cmd']=='forward':
+				self.moveforward = 1
 				#self.vel += (proj_normalize(self.towards)*WALKSPEED) 
-			elif msg.content['cmd']=='backward' and self.moving==0:
-				self.moving = -1
-								#self.vel -= (proj_normalize(self.towards)*WALKSPEED) 
-			elif (msg.content['cmd']=='stop forward' and self.moving ==1)  or (msg.content['cmd']=='stop backward' and self.moving==-1):
+			elif msg.content['cmd']=='backward':
+				self.movebackward = 1
+			elif msg.content['cmd']=='stop forward':
 				self.vel = np.array([0,0,self.vel[2]])
-				self.moving = 0
-		
-			elif msg.content['cmd']=='turn left' and self.turning==0:
-				self.turning = 1
-			elif msg.content['cmd']=='turn right' and self.turning==0:
-				self.turning = -1	
-			elif (msg.content['cmd']=='stop turn right' and self.turning == -1) or (msg.content['cmd']=='stop turn left'  and self.turning == 1):
-				self.turning = 0
-
+				self.moveforward = 0
+			elif msg.content['cmd']=='stop backward':
+				self.vel = np.array([0,0,self.vel[2]])
+				self.movebackward = 0
+			elif msg.content['cmd']=='turn left':
+				self.turnleft = 1
+			elif msg.content['cmd']=='turn right':
+				self.turnright = 1
+			elif msg.content['cmd']=='stop turn right':
+				self.turnright = 0
+			elif msg.content['cmd']=='stop turn left':
+				self.turnleft = 0
 		return
 		
 		
@@ -53,12 +57,16 @@ class Player:
 			self.vel[2]-=G*dt
 		else:
 			self.vel[2]=0
-		if self.turning!=0:
-			self.towards = rotate(self.towards, TURNSPEED*self.turning)
-		if self.moving!=0:
-			self.vel = self.moving*(proj_normalize(self.towards)*WALKSPEED) 
+		if self.turnleft!=0:
+			self.towards = rotate(self.towards, TURNSPEED)
+		if self.turnright!=0:
+			self.towards = rotate(self.towards, -TURNSPEED)
+		if self.moveforward!=0:
+			self.vel = (proj_normalize(self.towards)*WALKSPEED)
+		if self.movebackward!=0:
+			self.vel = -(proj_normalize(self.towards)*WALKSPEED) 
 			
-		if np.linalg.norm(self.vel)>0 or self.turning!=0:
+		if np.linalg.norm(self.vel)>0 or self.turnleft!=0 or self.turnright!=0:
 			self.print_player()
 		return
 	
