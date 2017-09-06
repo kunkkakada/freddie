@@ -3,8 +3,7 @@
 
 class Wall:
 	
-	def __init__(self, tag, x1, x2, y1, y2, height, col):
-		self.tag = tag
+	def __init__(self, x1, x2, y1, y2, height, col):
 		self.x1 = x1
 		self.x2 = x2
 		self.y1 = y1
@@ -22,8 +21,7 @@ class Wall:
 
 class Door:
 	
-	def __init__(self, tag, x1, x2, y1, y2, height, col, locked):
-		self.tag = tag
+	def __init__(self, x1, x2, y1, y2, height, col, locked):
 		self.x1 = x1
 		self.x2 = x2
 		self.y1 = y1

@@ -8,7 +8,7 @@ class Game:
 	
 	def __init__(self):
 		self.msg_bus = MessageBus()
-		self.systems = {'Input': Input(self.msg_bus), 'Player': Player(self.msg_bus), 'Screen': Display(self.msg_bus)}
+		self.systems = {'Input': Input(self.msg_bus), 'Scene': Scene(self.msg_bus), 'Screen': Display(self.msg_bus)}
 		#self.audio = audio()
 		#self.gui = gui()
 		#self.scene = scene() # basically this is one level; it holds ais, world, player, npcs
@@ -42,9 +42,9 @@ class Game:
 			
 			self.msg_bus.print_message_bus()
 			self.clean_message_bus()
-			self.systems['Player'].update(clock.get_time())
+			self.systems['Scene'].update(clock.get_time())
 			#self.systems['Player'].print_player()
-			self.systems['Screen'].update(self.systems['Player'].pos,self.systems['Player'].towards)
+			self.systems['Screen'].update()
 			
 			pygame.event.pump()
 			pygame.display.update()

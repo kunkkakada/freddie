@@ -8,8 +8,8 @@ TURNSPEED = 3.0
 G = 9.81
 
 class Player:
-	def __init__(self, msg_bus):
-		self.msg_bus = msg_bus
+	def __init__(self):
+		#self.msg_bus = msg_bus
 		self.pos = np.array([20,20,0], dtype=float) # x, y, z
 		self.vel = np.array([0,0,0], dtype=float) # vx, vy ,vz
 		self.towards = np.array([1,0,0], dtype=float) # 
