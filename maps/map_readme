@@ -1,0 +1,10 @@
+#levelx_objects.txt:
+walls n
+x_1 x_2 y_1 y_2 h color
+doors n
+x_1 x_2 y_1 y_2 h color locked
+
+
+---------------------------
+#levelx_mesh.txt
+
