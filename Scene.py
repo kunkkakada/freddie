@@ -44,7 +44,7 @@ class Scene:
 		self.player.update(timestep)
 		msg = Message(MsgType.SCENE)
 		msg.content = {'tag': id(self.player), 'group': 'character', 'pos': self.player.pos, 'towards': self.player.towards}
-		#self.msg_bus.post_message(msg)
+		self.msg_bus.post_message(msg)
 
 	def handle_message(self, msg):
 		self.player.handle_message(msg)

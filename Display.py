@@ -64,23 +64,37 @@ class Display:
 			pdir = np.array([direction[0], direction[1]])
 			# draw on the surface object
 		self.screen.fill(BLACK)
-		[wx1, wy1] = self.transform(ppos, pdir, [ix1,iy1,0])
-		[wx2, wy2] = self.transform(ppos, pdir, [ix2,iy2,0])
-		
+
 		if self.normalview_flag == 1:
 			linend = np.add(np.array([ppos[0],ppos[1]]),20*pdir)
 			pygame.draw.circle(self.screen, RED, (int(np.round(ppos[0])),int(np.round(ppos[1]))), 1)
 			pygame.draw.line(self.screen, BLUE, (int(np.round(ppos[0])),int(np.round(ppos[1]))), (linend[0], linend[1]))
-			pygame.draw.circle(self.screen, RED, (ix1,iy1), 2)
-			pygame.draw.circle(self.screen, BLUE, (ix2,iy2), 2)
-			pygame.draw.line(self.screen, GREEN, (ix1,iy1), (ix2,iy2))
-		
+
 		if self.pers_flag == 1:
 			pygame.draw.circle(self.screen, RED, (np.round(self.xwidth/2),np.round(self.ywidth/2)), 2)
 			pygame.draw.line(self.screen, BLUE, (np.round(self.xwidth/2)-1,np.round(self.ywidth/2)),(np.round(self.xwidth/2)-1,np.round(self.ywidth/2)-20))
-			pygame.draw.circle(self.screen, RED, (int(wx1),int(wy1)), 2)
-			pygame.draw.circle(self.screen, BLUE, (int(wx2),int(wy2)), 2)
-			pygame.draw.line(self.screen, GREEN, (wx1,wy1), (wx2,wy2))
+			
+		for wall in self.walls:
+			ix1 = int(wall.x1)
+			ix2 = int(wall.x2)
+			iy1 = int(wall.y1)
+			iy2 = int(wall.y2)
+			
+			[wx1, wy1] = self.transform(ppos, pdir, [ix1,iy1,0])
+			[wx2, wy2] = self.transform(ppos, pdir, [ix2,iy2,0])
+		
+		
+			if self.normalview_flag == 1:
+				pygame.draw.circle(self.screen, RED, (ix1,iy1), 2)
+				pygame.draw.circle(self.screen, BLUE, (ix2,iy2), 2)
+				pygame.draw.line(self.screen, GREEN, (ix1,iy1), (ix2,iy2))
+			
+			if self.pers_flag == 1:
+				pygame.draw.circle(self.screen, RED, (np.round(self.xwidth/2),np.round(self.ywidth/2)), 2)
+				pygame.draw.line(self.screen, BLUE, (np.round(self.xwidth/2)-1,np.round(self.ywidth/2)),(np.round(self.xwidth/2)-1,np.round(self.ywidth/2)-20))
+				pygame.draw.circle(self.screen, RED, (int(wx1),int(wy1)), 2)
+				pygame.draw.circle(self.screen, BLUE, (int(wx2),int(wy2)), 2)
+				pygame.draw.line(self.screen, GREEN, (wx1,wy1), (wx2,wy2))
 
 	def handle_message(self, msg):
 		#  Switch camera
