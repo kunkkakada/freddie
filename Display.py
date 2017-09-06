@@ -40,6 +40,8 @@ class Display:
 		self.msg_bus = msg_bus
 		self.xwidth = 800
 		self.ywidth = 600
+		self.walls = []
+		self.characters = {}
 		self.screen = pygame.display.set_mode((self.xwidth, self.ywidth))
 		self.midpoint = [np.round(self.xwidth/2), np.round(self.ywidth/2)]
 		self.normalview_flag = 0
@@ -49,13 +51,18 @@ class Display:
 		xr = point[0]-ppos[0]
 		yr = point[1]-ppos[1]
 		ang = angle_between360(pdir,northvector)
-		print np.rad2deg(ang)
+		#print np.rad2deg(ang)
 		w = rotate([xr,yr],ang)
 		return w+self.midpoint
 
-	def update(self, ppos, pdir):
-		pdir = np.array([pdir[0], pdir[1]])
-		# draw on the surface object
+	def update(self):
+		for posTowards in self.characters.values():
+			#print posTowards[0]
+			#print posTowards[1]
+			ppos = np.array(posTowards[0])
+			direction = posTowards[1]
+			pdir = np.array([direction[0], direction[1]])
+			# draw on the surface object
 		self.screen.fill(BLACK)
 		[wx1, wy1] = self.transform(ppos, pdir, [ix1,iy1,0])
 		[wx2, wy2] = self.transform(ppos, pdir, [ix2,iy2,0])
@@ -81,8 +88,18 @@ class Display:
 			if msg.content['cmd']=='switch camera forward':
 				self.normalview_flag ^= 1
 				self.pers_flag ^= 1
-		if msg.content['cmd']=='switch camera backward':
-				self.normalview_flag ^= 1
-				self.pers_flag ^= 1
+			if msg.content['cmd']=='switch camera backward':
+					self.normalview_flag ^= 1
+					self.pers_flag ^= 1
+		if msg.msg_type==MsgType.LOAD:
+			if msg.content['group'] == 'wall':
+				self.walls = msg.content['wall list']
+			if msg.content['group'] == 'character':
+				self.characters[msg.content['tag']] = [msg.content['pos'],msg.content['towards']]
+		if msg.msg_type==MsgType.SCENE:
+			if msg.content['group'] == 'character':
+				self.characters[msg.content['tag']] = (msg.content['pos'],msg.content['towards'])
+				
+		
 		return
 

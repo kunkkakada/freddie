@@ -15,7 +15,7 @@ class Scene:
 		self.mesh = None
 
 		
-		msg = Message(MsgType.SCENE)
+		msg = Message(MsgType.LOAD)
 		msg.content = {'tag': id(self.player), 'group': 'character', 'pos': self.player.pos, 'towards': self.player.towards}
 		self.msg_bus.post_message(msg)
 		
@@ -35,13 +35,16 @@ class Scene:
 			h = float(wall_line[4])
 			col = (int(wall_line[5]), int(wall_line[6]), int(wall_line[7]))
 			self.walls.append(Wall(x1, x2, y1, y2, h, col))
-		msg = Message(MsgType.SCENE)
+		msg = Message(MsgType.LOAD)
 		msg.content = {'group': 'wall', 'wall list': self.walls}
 		self.msg_bus.post_message(msg)
 		
 
 	def update(self, timestep):
 		self.player.update(timestep)
+		msg = Message(MsgType.SCENE)
+		msg.content = {'tag': id(self.player), 'group': 'character', 'pos': self.player.pos, 'towards': self.player.towards}
+		#self.msg_bus.post_message(msg)
 
 	def handle_message(self, msg):
 		self.player.handle_message(msg)

@@ -7,6 +7,7 @@ class MsgType:
     SCREEN = 4
     SOUND = 5
     EVENT = 6
+    LOAD = 7
 
 class Message:
     def __init__(self, msg_type):

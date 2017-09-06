@@ -2,6 +2,7 @@ from Message import *
 from Input import *
 from Player import *
 from Display import *
+from Scene import *
 import pygame
 
 class Game:
