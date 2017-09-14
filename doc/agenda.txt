@@ -1,0 +1,19 @@
+agenda for next week:
+
+- shoot messages
+
+- creating bullet instances / objects / rays
+
+- wall collision
+	- stop characters
+	- stop bullets
+
+TODO:
+
+- figure out if player should be under scene or not
+
+- picking up items
+
+- very rough AI
+	- move
+	- shoot
