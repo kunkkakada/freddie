@@ -14,6 +14,7 @@ ix2 = 600
 iy1 = 200
 iy2 = 400
 northvector = [0,-1]
+WALL_HEIGHT = 50.0
 	
 def unit_vector(vector):
     """ Returns the unit vector of the vector.  """
@@ -33,6 +34,10 @@ def rotate(vec, angle):
 	rotmatrix = np.array([[np.cos(angle),-np.sin(angle)],[np.sin(angle),np.cos(angle)]])
 	val = np.dot(rotmatrix,[vec[0],vec[1]])
 	return val
+	
+# Returns x of intersecting point with x-axis on graph
+def intersect(x1, y1, x2, y2):
+	return (y1 * x2 - y2 * x1) / (y1 - y2)
         
 class Display:
 
@@ -44,8 +49,8 @@ class Display:
 		self.characters = {}
 		self.screen = pygame.display.set_mode((self.xwidth, self.ywidth))
 		self.midpoint = [np.round(self.xwidth/2), np.round(self.ywidth/2)]
-		self.normalview_flag = 0
-		self.pers_flag = 1
+		self.views = [0,1,2]
+		self.view = self.views.pop(0)
 
 	def transform(self, ppos, pdir, point):
 		xr = point[0]-ppos[0]
@@ -54,7 +59,7 @@ class Display:
 		#print np.rad2deg(ang)
 		w = rotate([xr,yr],ang)
 		return w+self.midpoint
-
+		
 	def update(self):
 		for posTowards in self.characters.values():
 			#print posTowards[0]
@@ -65,12 +70,12 @@ class Display:
 			# draw on the surface object
 		self.screen.fill(BLACK)
 
-		if self.normalview_flag == 1:
+		if self.view == 0:
 			linend = np.add(np.array([ppos[0],ppos[1]]),20*pdir)
 			pygame.draw.circle(self.screen, RED, (int(np.round(ppos[0])),int(np.round(ppos[1]))), 1)
 			pygame.draw.line(self.screen, BLUE, (int(np.round(ppos[0])),int(np.round(ppos[1]))), (linend[0], linend[1]))
 
-		if self.pers_flag == 1:
+		if self.view == 1:
 			pygame.draw.circle(self.screen, RED, (np.round(self.xwidth/2),np.round(self.ywidth/2)), 2)
 			pygame.draw.line(self.screen, BLUE, (np.round(self.xwidth/2)-1,np.round(self.ywidth/2)),(np.round(self.xwidth/2)-1,np.round(self.ywidth/2)-20))
 			
@@ -84,27 +89,61 @@ class Display:
 			[wx2, wy2] = self.transform(ppos, pdir, [ix2,iy2,0])
 		
 		
-			if self.normalview_flag == 1:
+			if self.view == 0:
 				pygame.draw.circle(self.screen, RED, (ix1,iy1), 2)
 				pygame.draw.circle(self.screen, BLUE, (ix2,iy2), 2)
 				pygame.draw.line(self.screen, GREEN, (ix1,iy1), (ix2,iy2))
 			
-			if self.pers_flag == 1:
+			if self.view == 1:
 				pygame.draw.circle(self.screen, RED, (np.round(self.xwidth/2),np.round(self.ywidth/2)), 2)
 				pygame.draw.line(self.screen, BLUE, (np.round(self.xwidth/2)-1,np.round(self.ywidth/2)),(np.round(self.xwidth/2)-1,np.round(self.ywidth/2)-20))
 				pygame.draw.circle(self.screen, RED, (int(wx1),int(wy1)), 2)
 				pygame.draw.circle(self.screen, BLUE, (int(wx2),int(wy2)), 2)
 				pygame.draw.line(self.screen, GREEN, (wx1,wy1), (wx2,wy2))
+			
+			if self.view == 2:
+				w1 = self.transform(ppos, pdir, [ix1,iy1,0]) - self.midpoint
+				w2 = self.transform(ppos, pdir, [ix2,iy2,0]) - self.midpoint
+				
+				if w1[1] <= 0 and w2[1] <= 0:
+					continue
+					
+				# Clip walls intersecting with user plane
+				if w1[1] <= 0 or w2[1] <= 0:
+					ix1 = intersect(w1[0], w1[1], w2[0], w2[1])
+					if w1[1] <= 0:
+						w1[0] = ix1
+						w1[1] = 0.01
+					if w2[1] <= 0:
+						w2[0] = ix1
+						w2[1] = 0.01
+				
+				# Wall positions relative to player's position, rotation and perspective
+				zx1 = w1[0] / w1[1] + self.midpoint[0]
+				zu1 = WALL_HEIGHT  / w1[1] +self.midpoint[1] # Up   Z
+				zd1 = -WALL_HEIGHT / w1[1] +self.midpoint[1] # Down Z
+				zx2 = w2[0] / w2[1] + +self.midpoint[0]
+				zu2 = WALL_HEIGHT  / w2[1] +self.midpoint[1] # Up   Z
+				zd2 = -WALL_HEIGHT / w2[1] +self.midpoint[1]# Down Z
 
+				print zx1, zu1, zd1, zx2, zu2, zd2
+
+				pygame.draw.polygon(self.screen, GREEN, [
+					(zx1, zd1),
+					(zx1, zu1),
+					(zx2, zu2),
+					(zx2, zd2)], 1)
+
+				
 	def handle_message(self, msg):
 		#  Switch camera
 		if msg.msg_type==MsgType.INPUT:
 			if msg.content['cmd']=='switch camera forward':
-				self.normalview_flag ^= 1
-				self.pers_flag ^= 1
+				self.views.append(self.view)
+				self.view = self.views.pop(0)
 			if msg.content['cmd']=='switch camera backward':
-					self.normalview_flag ^= 1
-					self.pers_flag ^= 1
+				self.views.insert(0,self.view)
+				self.view = self.views.pop()
 		if msg.msg_type==MsgType.LOAD:
 			if msg.content['group'] == 'wall':
 				self.walls = msg.content['wall list']
