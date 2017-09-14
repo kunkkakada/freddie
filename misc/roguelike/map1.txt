@@ -1,4 +1,4 @@
 scene.addObject(Player([10,20], "Joel"))
 scene.addRoom([20,5],10,5,0,[25,10])
 scene.addRoom([65,15],10,10,2,[65,20])
-
+scene.addRoom([15,20],5,5,1,[17,20])
