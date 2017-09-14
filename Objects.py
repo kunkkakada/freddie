@@ -41,3 +41,42 @@ class Door:
 		if self.locked:
 			self.locked=False
 		
+
+class Weapon:
+	def __init__(self, name, damage, mag_size, reload_speed, fire_rate):
+		self.name = name
+		self.damage = damage
+		self.mag_size = mag_size
+		self.reload_speed = speed
+		self.fire_rate = fire_rate
+		self.mag = 0
+		
+		
+	def reload(bullets):
+		reloaded_bullets = 0
+		if bullets>0:
+			reloaded_bullets = min(bullets, mag_size-mag) 
+			mag = mag+reloaded_bullets
+			bullets -= reloaded_bullets
+		return reloaded_bullets
+			
+			
+			
+	def shoot():
+		if mag:
+			mag -= 1
+			return self.damage
+		return 0
+			
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	
+
+	
