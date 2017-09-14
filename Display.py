@@ -119,13 +119,14 @@ class Display:
 						w2[1] = 0.01
 				
 				# Wall positions relative to player's position, rotation and perspective
-				zx1 = w1[0] / w1[1] + self.midpoint[0]
+				zx1 = w1[0] / w1[1]
 				zu1 = WALL_HEIGHT  / w1[1] +self.midpoint[1] # Up   Z
 				zd1 = -WALL_HEIGHT / w1[1] +self.midpoint[1] # Down Z
-				zx2 = w2[0] / w2[1] + +self.midpoint[0]
+				zx2 = w2[0] / w2[1]
 				zu2 = WALL_HEIGHT  / w2[1] +self.midpoint[1] # Up   Z
 				zd2 = -WALL_HEIGHT / w2[1] +self.midpoint[1]# Down Z
 
+				print w1[0], w1[1], w2[0], w2[1]
 				print zx1, zu1, zd1, zx2, zu2, zd2
 
 				pygame.draw.polygon(self.screen, GREEN, [
