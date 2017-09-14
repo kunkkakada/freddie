@@ -29,7 +29,7 @@ class Game:
 			time = pygame.time.get_ticks()
 			
 			for event in events:
-				if event.type == MOUSEMOTION:h
+				if event.type == MOUSEMOTION:
 					self.systems['Input'].handle_mouse(0, event.buttons, pygame.mouse.get_pos(), time, rel=pygame.mouse.get_rel())
 				elif event.type == MOUSEBUTTONUP:
 					self.systems['Input'].handle_mouse(1, event.button, pygame.mouse.get_pos(), time)
