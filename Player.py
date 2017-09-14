@@ -1,11 +1,14 @@
 import numpy as np
 from Message import *
-
+from threading import Timer
+from Objects import Weapon
 
 JUMPSPEED = 5.0
 WALKSPEED = 0.5
 TURNSPEED = 3.0
 G = 9.81
+FIST_FIRE_RATE = 1.0
+FIST_DAMAGE = 10.0
 
 class Player:
 	def __init__(self):
@@ -19,17 +22,22 @@ class Player:
 		self.movebackward = 0
 		self.sector = None
 		self.load_jump = None
+		self.reloading = False
+		self.shooting = False
+		self.weapon = Weapon("fist", FIST_DAMAGE, 0, 0, FIST_FIRE_RATE ,0)
+		self.inventory = {'weapons': [], 'bullets': [0,0,0,0,0,0]}
+		self.timer = None
 	
 	def handle_message(self, msg):
 		if msg.msg_type==MsgType.INPUT:
+			## commands concerning moving
 			if msg.content['cmd']=='jump':
 				self.load_jump=msg.content['time']
 			elif msg.content['cmd']=='stop jump':
 				self.vel[2]+=min(1000, msg.content['time']-self.load_jump)*JUMPSPEED
 				self.load_jump = None
 			elif msg.content['cmd']=='forward':
-				self.moveforward = 1
-				#self.vel += (proj_normalize(self.towards)*WALKSPEED) 
+				self.moveforward = 1 
 			elif msg.content['cmd']=='backward':
 				self.movebackward = 1
 			elif msg.content['cmd']=='stop forward':
@@ -46,6 +54,26 @@ class Player:
 				self.turnright = 0
 			elif msg.content['cmd']=='stop turn left':
 				self.turnleft = 0
+			## commands with weapon
+			elif msg.content['cmd']=='shoot':
+				if not self.shooting and not self.reloading:
+					self.shooting = True
+					self.weapon.shoot()
+					self.timer = Timer(1/self.weapon.fire_rate, self.ready_to_shoot)
+					self.timer.start()
+					# TODO send message
+
+			elif msg.content['cmd']=='reload':
+				if self.weapon.cat>0 and not self.reloading and not self.shooting:
+					self.reloading = True
+					self.timer = Timer(1/self.weapon.reload_rate, self.reload_weapon)
+					# TODO send a message
+
+			elif msg.content['cmd']=='switch weapon':
+				if len(self.inventory['weapons']):
+					self.inventory['weapons'].append(self.weapon)
+					self.weapon = self.inventory['weapons'].pop(0)
+					
 		return
 		
 		
@@ -78,6 +106,14 @@ class Player:
 		print "     position: ", self.pos
 		print "     velocity: ", self.vel
 		print "     orientation: ", self.towards
+		
+	def ready_to_shoot():
+		self.shooting = False
+		
+		
+	def reload_weapon():
+		self.reloading = False
+		self.weapon.rload(self.inventory['bullets'][self.weapon.cat])
 
 
 
