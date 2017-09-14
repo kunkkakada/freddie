@@ -53,7 +53,7 @@ class Weapon:
 		self.cat = cat # 0,1,2,3,4,5 with 0 fist, 1 'crossbow', 2 'pistol', 3 'shotgun', 4 'rifle', 5 'rocketlauncher'
 		
 		
-	def rload(bullets):
+	def rload(self,bullets):
 		reloaded_bullets = 0
 		if bullets>0:
 			reloaded_bullets = min(bullets, mag_size-mag) 
@@ -63,9 +63,9 @@ class Weapon:
 			
 			
 			
-	def shoot():
-		if mag:
-			mag -= 1
+	def shoot(self):
+		if self.mag:
+			self.mag -= 1
 			return self.damage
 		return 0
 			

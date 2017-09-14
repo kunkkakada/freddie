@@ -107,11 +107,11 @@ class Player:
 		print "     velocity: ", self.vel
 		print "     orientation: ", self.towards
 		
-	def ready_to_shoot():
+	def ready_to_shoot(self):
 		self.shooting = False
 		
 		
-	def reload_weapon():
+	def reload_weapon(self):
 		self.reloading = False
 		self.weapon.rload(self.inventory['bullets'][self.weapon.cat])
 
