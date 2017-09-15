@@ -35,6 +35,11 @@ def rotate(vec, angle):
 	val = np.dot(rotmatrix,[vec[0],vec[1]])
 	return val
 	
+def rotate_eye(vec, angle):
+	rotmatrix = np.array([[np.cos(angle),-np.sin(angle)],[np.sin(angle),np.cos(angle)]])
+	val = np.dot(rotmatrix,[vec[0],vec[1]])
+	return [val[0], -val[1]] 	
+	
 # Returns x of intersecting point with x-axis on graph
 def intersect(x1, y1, x2, y2):
 	return (y1 * x2 - y2 * x1) / (y1 - y2)
@@ -59,6 +64,14 @@ class Display:
 		#print np.rad2deg(ang)
 		w = rotate([xr,yr],ang)
 		return w+self.midpoint
+		
+	def transform_eye(self, ppos, pdir, point):
+		xr = point[0]-ppos[0]
+		yr = point[1]-ppos[1]
+		ang = angle_between360(pdir,northvector)
+		#print np.rad2deg(ang)
+		w = rotate_eye([xr,yr],ang)
+		return w
 		
 	def update(self):
 		for posTowards in self.characters.values():
@@ -102,8 +115,8 @@ class Display:
 				pygame.draw.line(self.screen, GREEN, (wx1,wy1), (wx2,wy2))
 			
 			if self.view == 2:
-				w1 = self.transform(ppos, pdir, [ix1,iy1,0]) - self.midpoint
-				w2 = self.transform(ppos, pdir, [ix2,iy2,0]) - self.midpoint
+				w1 = self.transform_eye(ppos, pdir, [ix1,iy1,0])
+				w2 = self.transform_eye(ppos, pdir, [ix2,iy2,0])
 				
 				if w1[1] <= 0 and w2[1] <= 0:
 					continue
@@ -119,12 +132,12 @@ class Display:
 						w2[1] = 0.01
 				
 				# Wall positions relative to player's position, rotation and perspective
-				zx1 = w1[0] / w1[1]
-				zu1 = WALL_HEIGHT  / w1[1] +self.midpoint[1] # Up   Z
-				zd1 = -WALL_HEIGHT / w1[1] +self.midpoint[1] # Down Z
-				zx2 = w2[0] / w2[1]
-				zu2 = WALL_HEIGHT  / w2[1] +self.midpoint[1] # Up   Z
-				zd2 = -WALL_HEIGHT / w2[1] +self.midpoint[1]# Down Z
+				zx1 = self.xwidth*w1[0] / w1[1] + self.midpoint[0]
+				zu1 = self.ywidth*WALL_HEIGHT  / w1[1] +self.midpoint[1] # Up   Z
+				zd1 = self.ywidth*-WALL_HEIGHT / w1[1] +self.midpoint[1] # Down Z
+				zx2 = self.xwidth*w2[0] / w2[1] + self.midpoint[0]
+				zu2 = self.ywidth*WALL_HEIGHT  / w2[1] +self.midpoint[1] # Up   Z
+				zd2 = self.ywidth*-WALL_HEIGHT / w2[1] +self.midpoint[1]# Down Z
 
 				print w1[0], w1[1], w2[0], w2[1]
 				print zx1, zu1, zd1, zx2, zu2, zd2
