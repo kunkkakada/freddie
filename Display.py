@@ -56,6 +56,7 @@ class Display:
 		self.midpoint = [np.round(self.xwidth/2), np.round(self.ywidth/2)]
 		self.views = [0,1,2]
 		self.view = self.views.pop(0)
+		self.debugprints = 1
 
 	def transform(self, ppos, pdir, point):
 		xr = point[0]-ppos[0]
@@ -139,8 +140,9 @@ class Display:
 				zu2 = self.ywidth*WALL_HEIGHT  / w2[1] +self.midpoint[1] # Up   Z
 				zd2 = self.ywidth*-WALL_HEIGHT / w2[1] +self.midpoint[1]# Down Z
 
-				print w1[0], w1[1], w2[0], w2[1]
-				print zx1, zu1, zd1, zx2, zu2, zd2
+				if self.debugprints == 1:
+					print w1[0], w1[1], w2[0], w2[1]
+					print zx1, zu1, zd1, zx2, zu2, zd2
 
 				pygame.draw.polygon(self.screen, GREEN, [
 					(zx1, zd1),
@@ -166,7 +168,10 @@ class Display:
 		if msg.msg_type==MsgType.SCENE:
 			if msg.content['group'] == 'character':
 				self.characters[msg.content['tag']] = (msg.content['pos'],msg.content['towards'])
-				
+		if msg.msg_type==MsgType.CONSOLE:
+			if msg.content['to'] == 'display' or msg.content['to'] == 'all':
+				if msg.content['cmd'] == 'debugprints':
+					self.debugprints = msg.content['val']
 		
 		return
 

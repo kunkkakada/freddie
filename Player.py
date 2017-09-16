@@ -27,6 +27,7 @@ class Player:
 		self.weapon = Weapon("fist", FIST_DAMAGE, 0, 0, FIST_FIRE_RATE ,0)
 		self.inventory = {'weapons': [], 'bullets': [0,0,0,0,0,0]}
 		self.timer = None
+		self.debugprints = 1
 	
 	def handle_message(self, msg):
 		if msg.msg_type==MsgType.INPUT:
@@ -73,7 +74,11 @@ class Player:
 				if len(self.inventory['weapons']):
 					self.inventory['weapons'].append(self.weapon)
 					self.weapon = self.inventory['weapons'].pop(0)
-					
+		if msg.msg_type==MsgType.CONSOLE:
+			if msg.content['to'] == 'player' or msg.content['to'] == 'all':
+				if msg.content['cmd'] == 'debugprints':
+					self.debugprints = msg.content['val']
+
 		return
 		
 		
@@ -102,10 +107,11 @@ class Player:
 		return
 	
 	def print_player(self):
-		print "Player information"
-		print "     position: ", self.pos
-		print "     velocity: ", self.vel
-		print "     orientation: ", self.towards
+		if self.debugprints == 1:
+			print "Player information"
+			print "     position: ", self.pos
+			print "     velocity: ", self.vel
+			print "     orientation: ", self.towards
 		
 	def ready_to_shoot(self):
 		self.shooting = False

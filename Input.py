@@ -1,6 +1,6 @@
 from Message import *
 from pygame.locals import *
-
+import Console
 
 class Input:
 	def __init__(self, msg_bus):
@@ -112,9 +112,12 @@ class Input:
 				msg.content={'cmd': 'stop jump', 'time':t}
 				self.msg_bus.post_message(msg)
 				
-
-	
-	
+			if key==K_TAB:
+				inp = raw_input("Console>\n")
+				msg = Console.parse_command(inp)
+				if msg is not False:
+					self.msg_bus.post_message(msg)
+				
 	
 	# the mouse event is translated to int values in main, and here the corresponding messages are posted
 	# MOUSEMOTION 0, MOUSEBUTTONUP 1, MOUSEBUTTONDOWN 2

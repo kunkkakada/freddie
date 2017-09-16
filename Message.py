@@ -8,11 +8,12 @@ class MsgType:
     SOUND = 5
     EVENT = 6
     LOAD = 7
+    CONSOLE = 8
 
 class Message:
     def __init__(self, msg_type):
         self.msg_type = msg_type
-        self.content = None # Dictionary with keys 'obj', 'action', 'param'
+        self.content = {} # Dictionary with keys 'obj', 'action', 'param'
 	
 class MessageBus:
 	def __init__(self):

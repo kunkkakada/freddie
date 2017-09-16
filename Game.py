@@ -9,7 +9,8 @@ class Game:
 	
 	def __init__(self):
 		self.msg_bus = MessageBus()
-		self.systems = {'Input': Input(self.msg_bus), 'Scene': Scene(self.msg_bus), 'Screen': Display(self.msg_bus)}
+		self.systems = {'Game': self, 'Input': Input(self.msg_bus), 'Scene': Scene(self.msg_bus), 'Screen': Display(self.msg_bus)}
+		self.debugprints = 1
 		#self.audio = audio()
 		#self.gui = gui()
 		#self.scene = scene() # basically this is one level; it holds ais, world, player, npcs
@@ -41,8 +42,8 @@ class Game:
 					self.systems['Input'].handle_key_up(event.key, time)
 			#self.systems['Input'].handle_keys(keys)	
 			
-			
-			self.msg_bus.print_message_bus()
+			if self.debugprints == 1:
+				self.msg_bus.print_message_bus()
 			self.clean_message_bus()
 			self.systems['Scene'].update(clock.get_time())
 			#self.systems['Player'].print_player()
@@ -71,6 +72,13 @@ class Game:
 			for system in self.systems.values():
 				system.handle_message(msg)
 	
+	def handle_message(self, msg):
+		if msg.msg_type==MsgType.CONSOLE:
+			if msg.content['to'] == 'msgbus' or msg.content['to'] == 'all':
+				if msg.content['cmd'] == 'debugprints':
+					self.debugprints = msg.content['val']
+
+		return
 
 if __name__=='__main__':
 	pygame.init()
