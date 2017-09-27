@@ -4,8 +4,8 @@ from threading import Timer
 from Objects import Weapon
 
 JUMPSPEED = 5.0
-WALKSPEED = 0.5
-TURNSPEED = 3.0
+WALKSPEED = 0.01
+TURNSPEED = 3
 G = 9.81
 FIST_FIRE_RATE = 1.0
 FIST_DAMAGE = 10.0
@@ -13,7 +13,7 @@ FIST_DAMAGE = 10.0
 class Player:
 	def __init__(self):
 		#self.msg_bus = msg_bus
-		self.pos = np.array([20,20,0], dtype=float) # x, y, z
+		self.pos = np.array([0,0,0], dtype=float) # x, y, z
 		self.vel = np.array([0,0,0], dtype=float) # vx, vy ,vz
 		self.towards = np.array([1,0,0], dtype=float) # 
 		self.turnleft = 0

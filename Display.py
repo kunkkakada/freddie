@@ -14,7 +14,7 @@ ix2 = 600
 iy1 = 200
 iy2 = 400
 northvector = [0,-1]
-WALL_HEIGHT = 50.0
+WALL_HEIGHT = 0.5
 	
 def unit_vector(vector):
     """ Returns the unit vector of the vector.  """
@@ -36,8 +36,7 @@ def rotate(vec, angle):
 	return val
 	
 def rotate_eye(vec, angle):
-	rotmatrix = np.array([[np.cos(angle),-np.sin(angle)],[np.sin(angle),np.cos(angle)]])
-	val = np.dot(rotmatrix,[vec[0],vec[1]])
+	val = [vec[0]*np.cos(angle)-vec[1]*np.sin(angle), vec[0]*np.sin(angle)+vec[1]*np.cos(angle)]
 	return [val[0], -val[1]] 	
 	
 # Returns x of intersecting point with x-axis on graph
@@ -57,6 +56,7 @@ class Display:
 		self.views = [0,1,2]
 		self.view = self.views.pop(0)
 		self.debugprints = 1
+		self.wallfill = 0
 
 	def transform(self, ppos, pdir, point):
 		xr = point[0]-ppos[0]
@@ -148,7 +148,7 @@ class Display:
 					(zx1, zd1),
 					(zx1, zu1),
 					(zx2, zu2),
-					(zx2, zd2)], 1)
+					(zx2, zd2)], self.wallfill)
 
 				
 	def handle_message(self, msg):
@@ -172,6 +172,9 @@ class Display:
 			if msg.content['to'] == 'display' or msg.content['to'] == 'all':
 				if msg.content['cmd'] == 'debugprints':
 					self.debugprints = msg.content['val']
+			if msg.content['to'] == 'display':
+				if msg.content['cmd'] == 'wallfill':
+					self.wallfill = msg.content['val']
 		
 		return
 

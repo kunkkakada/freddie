@@ -29,4 +29,10 @@ def parse_command(cmd):
 			msg.content['val'] = int(cmd[2])
 			return msg
 
+	if cmd[0].lower() == 'wallfill' and len(cmd) > 1:
+		msg.content['cmd'] = 'wallfill'
+		msg.content['to'] = 'display'
+		msg.content['val'] = int(cmd[1])
+		return msg
+
 	return False
