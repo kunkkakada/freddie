@@ -1,4 +1,13 @@
-agenda for next week:
+agenda for next time...
+
+polttavat:
+- fix polygons & textures
+
+- level editor
+
+
+...
+funktionaalisuus:
 
 - shoot messages
 
