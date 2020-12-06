@@ -2,3 +2,4 @@ numpy
 pygame
 pyopengl
 pyopengl_accelerate
+Pillow
