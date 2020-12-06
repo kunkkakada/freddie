@@ -3,9 +3,9 @@ from Message import *
 from threading import Timer
 from Objects import Weapon
 
-JUMPSPEED = 5.0
-WALKSPEED = 0.01
-TURNSPEED = 3
+JUMPSPEED = 0.01
+WALKSPEED = 0.1
+TURNSPEED = 7
 G = 9.81
 FIST_FIRE_RATE = 1.0
 FIST_DAMAGE = 10.0
@@ -83,6 +83,7 @@ class Player:
 		
 		
 	def update(self, dt):
+		# Return 0 if stationary and 1 if moving
 		self.pos += dt*self.vel
 		
 		self.pos[2] = max(0, self.pos[2])
@@ -91,9 +92,9 @@ class Player:
 		else:
 			self.vel[2]=0
 		if self.turnleft!=0:
-			self.towards = rotate(self.towards, TURNSPEED)
-		if self.turnright!=0:
 			self.towards = rotate(self.towards, -TURNSPEED)
+		if self.turnright!=0:
+			self.towards = rotate(self.towards, TURNSPEED)
 			
 		if self.moveforward!=0 and self.movebackward!=0:	
 			self.vel = np.array([0,0,self.vel[2]])
@@ -104,7 +105,9 @@ class Player:
 			
 		if np.linalg.norm(self.vel)>0 or self.turnleft!=0 or self.turnright!=0:
 			self.print_player()
-		return
+			return 1
+		else:
+			return 0
 	
 	def print_player(self):
 		if self.debugprints == 1:

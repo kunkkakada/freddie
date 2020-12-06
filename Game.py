@@ -50,7 +50,8 @@ class Game:
 			self.systems['Screen'].update()
 			
 			pygame.event.pump()
-			pygame.display.update()
+			pygame.display.flip()
+#			pygame.display.update()
 		
 		#while gamelogic.running:
 			# get input, and append messages accordingly

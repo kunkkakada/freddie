@@ -1,7 +1,12 @@
-import pygame
-import numpy as np
-from pygame.locals import *
 from Message import *
+
+import pygame
+from pygame.locals import *
+import numpy as np
+
+from OpenGL.GL import *
+from OpenGL.GLU import *
+from PIL import Image
 
 BLACK = (  0,   0,   0)
 WHITE = (255, 255, 255)
@@ -9,12 +14,12 @@ RED   = (255,   0,   0)
 GREEN = (  0, 255,   0)
 BLUE  = (  0,   0, 255)
 
-ix1 = 600
-ix2 = 600
-iy1 = 200
-iy2 = 400
-northvector = [0,-1]
-WALL_HEIGHT = 0.5
+WALL_HEIGHT = 4.5
+CAMERA_HEIGHT = 1000.0
+
+VIEW_2D = 0
+VIEW_2D_CENTER = 1
+VIEW_3D_FPS = 2
 	
 def unit_vector(vector):
     """ Returns the unit vector of the vector.  """
@@ -27,16 +32,16 @@ def angle_between180(v1, v2):
     
 def angle_between360(v1,v2):
 	dot = np.dot(v1,v2)      # dot product
-	det = v1[0]*v2[1] - v1[1]*v2[0]      # determinant
+	det = v1[0] * v2[1] - v1[1] * v2[0]      # determinant
 	return np.arctan2(det, dot)
 
 def rotate(vec, angle):
-	rotmatrix = np.array([[np.cos(angle),-np.sin(angle)],[np.sin(angle),np.cos(angle)]])
-	val = np.dot(rotmatrix,[vec[0],vec[1]])
+	rotmatrix = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
+	val = np.dot(rotmatrix, [vec[0], vec[1]])
 	return val
 	
 def rotate_eye(vec, angle):
-	val = [vec[0]*np.cos(angle)-vec[1]*np.sin(angle), vec[0]*np.sin(angle)+vec[1]*np.cos(angle)]
+	val = [vec[0] * np.cos(angle) - vec[1] * np.sin(angle), vec[0] * np.sin(angle) + vec[1] * np.cos(angle)]
 	return [val[0], -val[1]] 	
 	
 # Returns x of intersecting point with x-axis on graph
@@ -44,112 +49,185 @@ def intersect(x1, y1, x2, y2):
 	return (y1 * x2 - y2 * x1) / (y1 - y2)
         
 class Display:
-
 	def __init__(self, msg_bus):
 		self.msg_bus = msg_bus
 		self.xwidth = 800
 		self.ywidth = 600
 		self.walls = []
 		self.characters = {}
-		self.screen = pygame.display.set_mode((self.xwidth, self.ywidth))
-		self.midpoint = [np.round(self.xwidth/2), np.round(self.ywidth/2)]
-		self.views = [0,1,2]
+		self.screen = pygame.display.set_mode((self.xwidth, self.ywidth), DOUBLEBUF|OPENGL)
+
+		self.midpoint = [np.round(self.xwidth / 2), np.round(self.ywidth / 2)]
+		self.views = [VIEW_2D, VIEW_2D_CENTER, VIEW_3D_FPS]
 		self.view = self.views.pop(0)
+
 		self.debugprints = 1
 		self.wallfill = 0
 
-	def transform(self, ppos, pdir, point):
-		xr = point[0]-ppos[0]
-		yr = point[1]-ppos[1]
-		ang = angle_between360(pdir,northvector)
-		#print np.rad2deg(ang)
-		w = rotate([xr,yr],ang)
-		return w+self.midpoint
-		
-	def transform_eye(self, ppos, pdir, point):
-		xr = point[0]-ppos[0]
-		yr = point[1]-ppos[1]
-		ang = angle_between360(pdir,northvector)
-		#print np.rad2deg(ang)
-		w = rotate_eye([xr,yr],ang)
-		return w
-		
+		# TODO: load in a function and store in a dictionary
+		self.wall_texture_id = self.load_image('img/wall1.png')
+
+		# Enable depth testing to prevent drawn objects overlapping
+		glEnable(GL_DEPTH_TEST)
+
+		# Set perspective settings
+		glMatrixMode(GL_PROJECTION)
+		gluPerspective(60, (self.xwidth / self.ywidth), 0.1, 10000.0)
+		glMatrixMode(GL_MODELVIEW)
+
+		# Set perspective to default camera
+		self.default_camera()
+
+	def load_image(self, filename):
+		im = Image.open(filename)
+		ix, iy, image = im.size[0], im.size[1], im.tobytes("raw", "RGBA", 0, -1)
+		texture_id = glGenTextures(1)
+
+		glBindTexture(GL_TEXTURE_2D, texture_id)
+		glPixelStorei(GL_UNPACK_ALIGNMENT, 1)
+		glTexImage2D(GL_TEXTURE_2D, 0, 3, ix, iy, 0, GL_RGBA, GL_UNSIGNED_BYTE, image)
+
+		return texture_id
+
+	def select_camera(self):
+		for key, value in self.characters.iteritems():
+			if value[2] != 'player':
+				continue
+			pos = value[0]
+			direction = value[1]
+			cdir = np.array([direction[0], direction[1]])
+
+		glLoadIdentity()
+		if self.view == VIEW_2D:
+			self.default_camera()
+		else:
+			self.set_camera(pos, cdir)
+
+	def default_camera(self):
+		gluLookAt(0, 0, CAMERA_HEIGHT, 0, 0, 0, -1, 0, 0)
+
+	def set_camera(self, pos, cdir):
+		if self.view == VIEW_2D_CENTER:
+			gluLookAt(pos[0], pos[1], CAMERA_HEIGHT, pos[0], pos[1], 0, cdir[0], cdir[1], 0)
+		elif self.view == VIEW_3D_FPS:
+			gluLookAt(pos[0], pos[1], pos[2] + 1.5, pos[0] + 1.0 * cdir[0], pos[1] + 1.0 * cdir[1], pos[2] + 1.5, 0, 0, 1.0)
+
+	def draw_player(self, ppos, pdir):
+		self.draw_player_2d(ppos, pdir)
+
+	def draw_player_2d(self, ppos, pdir):
+		linend = np.add(np.array([ppos[0], ppos[1]]), 20 * pdir)
+
+		# Draw player direction vector
+		if self.view <= VIEW_2D_CENTER:
+			glBegin(GL_LINES)	
+			glColor3d(1, 1, 1)
+			glVertex3f(int(np.round(ppos[0])), int(np.round(ppos[1])), int(np.round(ppos[2])))
+			glVertex3f(linend[0], linend[1], ppos[2])
+			glEnd()
+
+			# Draw dot
+			glEnable(GL_POINT_SMOOTH)
+			glPointSize(5 + ppos[2] / 10.0)
+
+			glBegin(GL_POINTS)
+			glColor3d(1, 0, 0)
+			glVertex3d(ppos[0], ppos[1], ppos[2])
+			glEnd()
+
+	def draw_npcs(self):
+		for key, value in self.characters.iteritems():
+			if value[2] == 'player':
+				continue
+
+			cpos = character[0]
+			direction = character[1]
+			cdir = np.array(direction[0], direction[1])
+
+			# TODO Draw character
+
+	def draw_walls(self, ppos, pdir):
+		for idx, wall in enumerate(self.walls):		
+			if self.view == VIEW_2D or self.view == VIEW_2D_CENTER:
+				self.draw_wall_2d(wall)
+			
+			elif self.view == VIEW_3D_FPS:
+				self.draw_wall_3d(wall)
+
+	def draw_wall_2d(self, wall):
+		glBegin(GL_LINES)
+		glColor3d(0, 1, 0)
+		glVertex3f(wall.x1, wall.y1, 0.0)
+		glVertex3f(wall.x2, wall.y2, 0.0)
+		glEnd()
+
+		# Draw dots
+		# LEFT = RED
+		glEnable(GL_POINT_SMOOTH)
+		glPointSize(5)
+
+		glBegin(GL_POINTS)
+		glColor3d(1, 0, 0)
+		glVertex3d(wall.x1, wall.y1, 0.0)
+		glEnd()
+
+		# RIGHT = BLUE
+		glEnable(GL_POINT_SMOOTH)
+		glPointSize(5)
+
+		glBegin(GL_POINTS)
+		glColor3d(0, 0, 1)
+		glVertex3d(wall.x2, wall.y2, 0.0)
+		glEnd()
+
+	def draw_wall_3d(self, wall):
+		glEnable(GL_TEXTURE_2D)
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
+		glBindTexture(GL_TEXTURE_2D, self.wall_texture_id)
+
+		glBegin(GL_QUADS)
+		glColor3d(0, 1, 0)
+		glTexCoord2f(0.0,0.0)
+		glVertex3f(wall.x1, wall.y1, 0.0)
+
+		glTexCoord2f(25.0,0.0)
+		glVertex3f(wall.x1, wall.y1, WALL_HEIGHT)
+
+		glTexCoord2f(25.0,25.0)
+		glVertex3f(wall.x2, wall.y2, WALL_HEIGHT)
+
+		glTexCoord2f(0.0,25.0)
+		glVertex3f(wall.x2, wall.y2, 0.0)
+		glEnd()
+		glDisable(GL_TEXTURE_2D)
+
 	def update(self):
-		for posTowards in self.characters.values():
-			#print posTowards[0]
-			#print posTowards[1]
-			ppos = np.array(posTowards[0])
-			direction = posTowards[1]
-			pdir = np.array([direction[0], direction[1]])
-			# draw on the surface object
+		# Clear screen
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 		self.screen.fill(BLACK)
 
-		if self.view == 0:
-			linend = np.add(np.array([ppos[0],ppos[1]]),20*pdir)
-			pygame.draw.circle(self.screen, RED, (int(np.round(ppos[0])),int(np.round(ppos[1]))), 1)
-			pygame.draw.line(self.screen, BLUE, (int(np.round(ppos[0])),int(np.round(ppos[1]))), (linend[0], linend[1]))
+		# Get player position
+		for key, value in self.characters.iteritems():
+			# TODO: handle multiple players?
+			if value[2] != 'player':
+				continue
+			ppos = value[0]
+			direction = value[1]
+			pdir = np.array([direction[0], direction[1]])
 
-		if self.view == 1:
-			pygame.draw.circle(self.screen, RED, (np.round(self.xwidth/2),np.round(self.ywidth/2)), 2)
-			pygame.draw.line(self.screen, BLUE, (np.round(self.xwidth/2)-1,np.round(self.ywidth/2)),(np.round(self.xwidth/2)-1,np.round(self.ywidth/2)-20))
-			
-		for wall in self.walls:
-			ix1 = int(wall.x1)
-			ix2 = int(wall.x2)
-			iy1 = int(wall.y1)
-			iy2 = int(wall.y2)
-			
-			[wx1, wy1] = self.transform(ppos, pdir, [ix1,iy1,0])
-			[wx2, wy2] = self.transform(ppos, pdir, [ix2,iy2,0])
-		
-		
-			if self.view == 0:
-				pygame.draw.circle(self.screen, RED, (ix1,iy1), 2)
-				pygame.draw.circle(self.screen, BLUE, (ix2,iy2), 2)
-				pygame.draw.line(self.screen, GREEN, (ix1,iy1), (ix2,iy2))
-			
-			if self.view == 1:
-				pygame.draw.circle(self.screen, RED, (np.round(self.xwidth/2),np.round(self.ywidth/2)), 2)
-				pygame.draw.line(self.screen, BLUE, (np.round(self.xwidth/2)-1,np.round(self.ywidth/2)),(np.round(self.xwidth/2)-1,np.round(self.ywidth/2)-20))
-				pygame.draw.circle(self.screen, RED, (int(wx1),int(wy1)), 2)
-				pygame.draw.circle(self.screen, BLUE, (int(wx2),int(wy2)), 2)
-				pygame.draw.line(self.screen, GREEN, (wx1,wy1), (wx2,wy2))
-			
-			if self.view == 2:
-				w1 = self.transform_eye(ppos, pdir, [ix1,iy1,0])
-				w2 = self.transform_eye(ppos, pdir, [ix2,iy2,0])
-				
-				if w1[1] <= 0 and w2[1] <= 0:
-					continue
-					
-				# Clip walls intersecting with user plane
-				if w1[1] <= 0 or w2[1] <= 0:
-					ix1 = intersect(w1[0], w1[1], w2[0], w2[1])
-					if w1[1] <= 0:
-						w1[0] = ix1
-						w1[1] = 0.01
-					if w2[1] <= 0:
-						w2[0] = ix1
-						w2[1] = 0.01
-				
-				# Wall positions relative to player's position, rotation and perspective
-				zx1 = self.xwidth*w1[0] / w1[1] + self.midpoint[0]
-				zu1 = self.ywidth*WALL_HEIGHT  / w1[1] +self.midpoint[1] # Up   Z
-				zd1 = self.ywidth*-WALL_HEIGHT / w1[1] +self.midpoint[1] # Down Z
-				zx2 = self.xwidth*w2[0] / w2[1] + self.midpoint[0]
-				zu2 = self.ywidth*WALL_HEIGHT  / w2[1] +self.midpoint[1] # Up   Z
-				zd2 = self.ywidth*-WALL_HEIGHT / w2[1] +self.midpoint[1]# Down Z
+		# Draw player
+		self.draw_player(ppos, pdir)
 
-				if self.debugprints == 1:
-					print w1[0], w1[1], w2[0], w2[1]
-					print zx1, zu1, zd1, zx2, zu2, zd2
+		# Draw other characters
+		self.draw_npcs()
+			
+		# Draw walls
+		self.draw_walls(ppos, pdir)
 
-				pygame.draw.polygon(self.screen, GREEN, [
-					(zx1, zd1),
-					(zx1, zu1),
-					(zx2, zu2),
-					(zx2, zd2)], self.wallfill)
-
+		# Select camera based on view
+		self.select_camera()
 				
 	def handle_message(self, msg):
 		#  Switch camera
@@ -157,17 +235,21 @@ class Display:
 			if msg.content['cmd']=='switch camera forward':
 				self.views.append(self.view)
 				self.view = self.views.pop(0)
+				self.update()
+
 			if msg.content['cmd']=='switch camera backward':
 				self.views.insert(0,self.view)
 				self.view = self.views.pop()
+				self.update()
+
 		if msg.msg_type==MsgType.LOAD:
 			if msg.content['group'] == 'wall':
 				self.walls = msg.content['wall list']
 			if msg.content['group'] == 'character':
-				self.characters[msg.content['tag']] = [msg.content['pos'],msg.content['towards']]
+				self.characters[msg.content['tag']] = [msg.content['pos'], msg.content['towards'], msg.content['type']]
 		if msg.msg_type==MsgType.SCENE:
 			if msg.content['group'] == 'character':
-				self.characters[msg.content['tag']] = (msg.content['pos'],msg.content['towards'])
+				self.characters[msg.content['tag']] = [msg.content['pos'], msg.content['towards'], msg.content['type']]
 		if msg.msg_type==MsgType.CONSOLE:
 			if msg.content['to'] == 'display' or msg.content['to'] == 'all':
 				if msg.content['cmd'] == 'debugprints':

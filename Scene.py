@@ -16,7 +16,7 @@ class Scene:
 
 		
 		msg = Message(MsgType.LOAD)
-		msg.content = {'tag': id(self.player), 'group': 'character', 'pos': self.player.pos, 'towards': self.player.towards}
+		msg.content = {'tag': id(self.player), 'type': 'player', 'group': 'character', 'pos': self.player.pos, 'towards': self.player.towards}
 		self.msg_bus.post_message(msg)
 		
 	def load_scene(self, objectfile):
@@ -41,10 +41,12 @@ class Scene:
 		
 
 	def update(self, timestep):
-		self.player.update(timestep)
-		msg = Message(MsgType.SCENE)
-		msg.content = {'tag': id(self.player), 'group': 'character', 'pos': self.player.pos, 'towards': self.player.towards}
-		self.msg_bus.post_message(msg)
+		moved = self.player.update(timestep)
+
+		if moved:
+			msg = Message(MsgType.SCENE)
+			msg.content = {'tag': id(self.player), 'type': 'player', 'group': 'character', 'pos': self.player.pos, 'towards': self.player.towards}
+			self.msg_bus.post_message(msg)
 
 	def handle_message(self, msg):
 		self.player.handle_message(msg)
