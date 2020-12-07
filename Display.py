@@ -14,40 +14,13 @@ RED   = (255,   0,   0)
 GREEN = (  0, 255,   0)
 BLUE  = (  0,   0, 255)
 
-WALL_HEIGHT = 4.5
+WALL_HEIGHT = 512.0
 CAMERA_HEIGHT = 1000.0
 
 VIEW_2D = 0
 VIEW_2D_CENTER = 1
 VIEW_3D_FPS = 2
-	
-def unit_vector(vector):
-    """ Returns the unit vector of the vector.  """
-    return vector / np.linalg.norm(vector)
-
-def angle_between180(v1, v2):
-    v1_u = unit_vector(v1)
-    v2_u = unit_vector(v2)
-    return np.arccos(np.clip(np.dot(v1_u, v2_u), -1.0, 1.0))
-    
-def angle_between360(v1,v2):
-	dot = np.dot(v1,v2)      # dot product
-	det = v1[0] * v2[1] - v1[1] * v2[0]      # determinant
-	return np.arctan2(det, dot)
-
-def rotate(vec, angle):
-	rotmatrix = np.array([[np.cos(angle), -np.sin(angle)], [np.sin(angle), np.cos(angle)]])
-	val = np.dot(rotmatrix, [vec[0], vec[1]])
-	return val
-	
-def rotate_eye(vec, angle):
-	val = [vec[0] * np.cos(angle) - vec[1] * np.sin(angle), vec[0] * np.sin(angle) + vec[1] * np.cos(angle)]
-	return [val[0], -val[1]] 	
-	
-# Returns x of intersecting point with x-axis on graph
-def intersect(x1, y1, x2, y2):
-	return (y1 * x2 - y2 * x1) / (y1 - y2)
-        
+ 
 class Display:
 	def __init__(self, msg_bus):
 		self.msg_bus = msg_bus
@@ -189,16 +162,16 @@ class Display:
 
 		glBegin(GL_QUADS)
 		glColor3d(0, 1, 0)
-		glTexCoord2f(0.0,0.0)
+		glTexCoord2f(0.0, 0.0)
 		glVertex3f(wall.x1, wall.y1, 0.0)
 
-		glTexCoord2f(25.0,0.0)
+		glTexCoord2f(0.0, 1.0)
 		glVertex3f(wall.x1, wall.y1, WALL_HEIGHT)
 
-		glTexCoord2f(25.0,25.0)
+		glTexCoord2f(1.0, 1.0)
 		glVertex3f(wall.x2, wall.y2, WALL_HEIGHT)
 
-		glTexCoord2f(0.0,25.0)
+		glTexCoord2f(1.0, 0.0)
 		glVertex3f(wall.x2, wall.y2, 0.0)
 		glEnd()
 		glDisable(GL_TEXTURE_2D)
