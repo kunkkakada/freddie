@@ -15,7 +15,7 @@ GREEN = (  0, 255,   0)
 BLUE  = (  0,   0, 255)
 
 WALL_HEIGHT = 3.5
-CAMERA_HEIGHT = 1000.0
+CAMERA_HEIGHT = 500.0
 
 VIEW_2D = 0
 VIEW_2D_CENTER = 1
@@ -90,7 +90,7 @@ class Display:
 		self.draw_player_2d(ppos, pdir)
 
 	def draw_player_2d(self, ppos, pdir):
-		linend = np.add(np.array([ppos[0], ppos[1]]), 20 * pdir)
+		linend = np.add(np.array([ppos[0], ppos[1]]), 10 * pdir)
 
 		# Draw player direction vector
 		if self.view <= VIEW_2D_CENTER:
@@ -206,8 +206,20 @@ class Display:
 		# Draw walls
 		self.draw_walls(ppos, pdir)
 
+		# Draw floor
+		glBegin(GL_QUADS)
+
+		glColor3d(0.12, 0.08, 0.08)
+		glVertex3f(-200.0, -200.0, 0.0)
+		glVertex3f(-200.0, 200.0, 0.0)
+		glVertex3f(200.0, 200.0, 0.0)
+		glVertex3f(200.0, -200.0, 0.0)
+
+		glEnd()
+
 		# Select camera based on view
 		self.select_camera()
+
 				
 	def handle_message(self, msg):
 		#  Switch camera

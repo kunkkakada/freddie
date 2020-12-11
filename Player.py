@@ -4,8 +4,8 @@ from threading import Timer
 from Objects import Weapon
 
 JUMPSPEED = 0.01
-WALKSPEED = 0.1
-TURNSPEED = 7
+WALKSPEED = 0.02
+TURNSPEED = 2.5
 G = 9.81
 FIST_FIRE_RATE = 1.0
 FIST_DAMAGE = 10.0
