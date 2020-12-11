@@ -14,7 +14,7 @@ RED   = (255,   0,   0)
 GREEN = (  0, 255,   0)
 BLUE  = (  0,   0, 255)
 
-WALL_HEIGHT = 512.0
+WALL_HEIGHT = 3.5
 CAMERA_HEIGHT = 1000.0
 
 VIEW_2D = 0
@@ -53,6 +53,7 @@ class Display:
 
 	def load_image(self, filename):
 		im = Image.open(filename)
+		# Todo: return/save image sizes as well
 		ix, iy, image = im.size[0], im.size[1], im.tobytes("raw", "RGBA", 0, -1)
 		texture_id = glGenTextures(1)
 
@@ -160,19 +161,25 @@ class Display:
 		glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_DECAL)
 		glBindTexture(GL_TEXTURE_2D, self.wall_texture_id)
 
+		wall_length = np.sqrt(np.power(wall.x2 - wall.x1, 2) + np.power(wall.y2 - wall.y1, 2))
+		# TODO use im.size
+		u = wall_length / (256.0 / 512.0 * 4.5)
+
 		glBegin(GL_QUADS)
 		glColor3d(0, 1, 0)
+
 		glTexCoord2f(0.0, 0.0)
 		glVertex3f(wall.x1, wall.y1, 0.0)
 
 		glTexCoord2f(0.0, 1.0)
 		glVertex3f(wall.x1, wall.y1, WALL_HEIGHT)
 
-		glTexCoord2f(1.0, 1.0)
+		glTexCoord2f(u, 1.0)
 		glVertex3f(wall.x2, wall.y2, WALL_HEIGHT)
 
-		glTexCoord2f(1.0, 0.0)
+		glTexCoord2f(u, 0.0)
 		glVertex3f(wall.x2, wall.y2, 0.0)
+
 		glEnd()
 		glDisable(GL_TEXTURE_2D)
 
